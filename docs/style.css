@@ -5,7 +5,9 @@ body {
 }
 
 div#nav {
-	width: 100vw;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
 	position: sticky;
 	top: 0px;
 }
