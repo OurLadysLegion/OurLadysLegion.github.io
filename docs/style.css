@@ -2,16 +2,18 @@ body {
 	margin: 0px;
 	width: 100%;
 	min-height: 100%;
+	background: #303034;
+	color: #ffffff;
 }
 
 div#nav {
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
-	position: sticky;
-	top: 0px;
+	border-bottom: 1px solid #ffffff;
 }
 
 div#main {
+	display: block;
 	height: 500vh;
 }

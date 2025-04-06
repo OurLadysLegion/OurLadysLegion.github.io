@@ -1,9 +1,7 @@
 const http = require("http");
-const path = require("path");
 const fs = require("fs");
 
-const docsPath = path.join(__dirname, "../docs", url);
-
+const cwd = process.cwd();
 const options = {
 //	key: fs.readFileSync("./certs/private-key.pem"),
 //	cert: fs.readFileSync("./certs/certificate.pem")
@@ -16,13 +14,12 @@ const server = http.createServer(options, (req, res) => {
 		if (url === "/") {
 			url = "/index.html";
 		}
-		console.log(url, "../docs" + url, fs.existsSync("../docs" + url));
-		if (fs.existsSync("../docs" + url)) {
+		if (fs.existsSync("./docs" + url)) {
 			res.writeHead(200);
-			res.end(fs.readFileSync("../docs" + url));
-		} else if (req.url.startsWith("/public/") && fs.existsSync("./public" + req.url)) {
+			res.end(fs.readFileSync("./docs" + url));
+		} else if (req.url.startsWith("/public/") && fs.existsSync("./server/public" + req.url)) {
 			res.writeHead(200);
-			res.end(fs.readFileSync("./public" + req.url));
+			res.end(fs.readFileSync("./server/public" + req.url));
 		} else {
 			res.writeHead(404);
 			res.end("<h1>404 Error: Page Not Found!</h1>");
