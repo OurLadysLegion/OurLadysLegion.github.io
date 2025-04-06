@@ -1,5 +1,8 @@
 const http = require("http");
+const path = require("path");
 const fs = require("fs");
+
+const docsPath = path.join(__dirname, "../docs", url);
 
 const options = {
 //	key: fs.readFileSync("./certs/private-key.pem"),
