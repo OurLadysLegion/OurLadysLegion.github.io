@@ -1,0 +1,7 @@
+modules = ["nodejs-23"]
+run = "node server/index.js"
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "node server/index.js"]
