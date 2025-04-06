@@ -1,0 +1,11 @@
+html, body {
+	margin: 0px;
+	width: 100vw;
+	min-height: 100vh;
+}
+
+div#nav {
+	width: 100vw;
+	position: sticky;
+	top: 0px;
+}
