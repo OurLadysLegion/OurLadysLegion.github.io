@@ -10,14 +10,7 @@ body {
 	min-height: 100%;
 	background: var(--bg);
 	color: var(--text);
-}
-
-a {
-	color: var(--text);
-	text-decoration: none;
-	padding: 5px;
-	outline: 2px solid var(--acc);
-	border-radius: 5px;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
 div#bg {
@@ -37,8 +30,11 @@ div#nav {
 	margin: 0px;
 	padding: 15px;
 	width: calc(100% - 30px);
-	border-bottom: 1px solid var(--acc);
+	border-bottom: 2px solid var(--acc);
 	font-size: 250%;
+}
+
+div#navText {
 	font-weight: bold;
 }
 
@@ -56,6 +52,17 @@ div#navLogo {
 
 div#navSpacer {
 	flex-grow: 1;
+}
+
+div#navLinks > a {
+	color: var(--text);
+	text-decoration: none;
+	padding: 5px;
+	transition: border-bottom 0.1s;
+}
+
+div#navLinks > a:hover {
+	border-bottom: 3px solid var(--acc);
 }
 
 div#main {
