@@ -1,19 +1,68 @@
+:root {
+	--text: #ffffff;
+	--acc: #ffffff;
+	--bg: #303038;
+}
+
 body {
 	margin: 0px;
 	width: 100%;
 	min-height: 100%;
-	background: #303034;
-	color: #ffffff;
+	background: var(--bg);
+	color: var(--text);
+}
+
+a {
+	color: var(--text);
+	text-decoration: none;
+	padding: 5px;
+	outline: 2px solid var(--acc);
+	border-radius: 5px;
+}
+
+div#bg {
+	z-index: -1;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: var(--bg);
 }
 
 div#nav {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
 	margin: 0px;
-	padding: 0px;
-	width: 100%;
-	border-bottom: 1px solid #ffffff;
+	padding: 15px;
+	width: calc(100% - 30px);
+	border-bottom: 1px solid var(--acc);
+	font-size: 250%;
+	font-weight: bold;
+}
+
+div.logo {
+	background: #ffffff;
+	-webkit-mask: url("/OLLSheild.svg") no-repeat center / contain;
+	mask: url("/OLLSheild.svg") no-repeat center / contain;
+}
+
+div#navLogo {
+	background: #ffffff;
+	width: 64px;
+	height: 64px;
+}
+
+div#navSpacer {
+	flex-grow: 1;
 }
 
 div#main {
 	display: block;
 	height: 500vh;
+}
+
+@media only screen and (orientation: portrait) {
+	/* mobile styling here */
 }
