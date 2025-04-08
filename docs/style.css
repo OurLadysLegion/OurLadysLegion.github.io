@@ -116,7 +116,7 @@ div#main {
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
-		min-width: 40vw;
+		min-width: calc(40vw + 5px);
 		height: 100vh;
 		position: fixed;
 		padding: 15px;
