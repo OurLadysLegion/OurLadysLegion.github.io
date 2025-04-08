@@ -36,7 +36,7 @@ const server = http.createServer(options, (req, res) => {
 			} else if (url.endsWith(".css")) {
 				res.writeHead(200, { "Content-Type": "text/css" });
 			} else if (url.endsWith(".js")) {
-				res.writeHead(200, { "Content-Type": "application/javascript" });
+				res.writeHead(200, {"Content-Type": "application/javascript"});
 			} else if (url.endsWith(".svg")) {
 				res.writeHead(200, { "Content-Type": "image/svg+xml" });
 			} else {

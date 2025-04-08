@@ -40,13 +40,13 @@ div#navText {
 }
 
 div.logo {
-	background: #ffffff;
+	background: var(--acc);
 	-webkit-mask: url("/OLLSheild.svg") no-repeat center / contain;
 	mask: url("/OLLSheild.svg") no-repeat center / contain;
 }
 
 div#navLogo {
-	background: #ffffff;
+	background: var(--acc);
 	width: 64px;
 	height: 64px;
 }
@@ -57,20 +57,20 @@ div#navSpacer {
 
 div#navMenu {
 	display: none;
-	background: #ffffff;
+	background: var(--acc);
 	-webkit-mask: url("/HamburgerMenu.svg") no-repeat center / contain;
 	mask: url("/HamburgerMenu.svg") no-repeat center / contain;
-	background: #ffffff;
+	background: var(--acc);
 	width: 64px;
 	height: 64px;
 }
 
 div#sidebarMenu {
 	display: none;
-	background: #ffffff;
+	background: var(--acc);
 	-webkit-mask: url("/CloseMenu.svg") no-repeat center / contain;
 	mask: url("/CloseMenu.svg") no-repeat center / contain;
-	background: #ffffff;
+	background: var(--acc);
 	width: 32px;
 	height: 32px;
 }
@@ -92,8 +92,9 @@ div#sidebar {
 }
 
 div#main {
+	text-align: center;
 	display: block;
-	height: 500vh;
+	font-size: 150%;
 }
 
 @media only screen and (orientation: portrait) {

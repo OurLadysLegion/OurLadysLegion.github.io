@@ -8,25 +8,16 @@
 		<link rel="stylesheet" href="/style.css" />
 	</head>
 	<body>
-		<div id="bg"></div>
-		<div id="nav">
-			<div id="navText">Our Lady's Legion&nbsp;</div>
-			<div class="logo" id="navLogo"></div>
-			<div id="navSpacer"></div>
-			<div id="navMenu"></div>
-			<div id="navLinks">
-				<a href="/about.html">About</a>&nbsp;
-				<a href="/test.html">Test</a>&nbsp;
+		<div data-template="/navBar.html" data-template-replace="true"></div>
+		<div id="main">
+			<div class="section">
+				<h3>Welcome to Our Lady's Legion's Website!</h3>
+				<p>
+					Here, you can keep up with the Legion. We will be posting news and events to this website.
+				</p>
 			</div>
 		</div>
-		<div id="sidebar">
-			<div id="sidebarMenu"></div>
-			<a href="/about.html">About</a>
-			<a href="/test.html">Test</a>
-		</div>
-		<div id="main">
-			<h2>Main Page</h2>
-		</div>
-		<script src="/script.js"></script>
+		<script src="/HTMLTemplates.js"></script>
+		<script data-template-reload="true" src="/script.js"></script>
 	</body>
 </html>
