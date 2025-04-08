@@ -1,6 +1,5 @@
 // Constant Definitions
 const templates = document.querySelectorAll("[data-template]");
-const scripts = document.querySelectorAll("script[data-template-reload=\"true\"]");
 
 // Function Executions
 multiTemplates(templates);
@@ -30,13 +29,15 @@ async function loadTemplate(element) {
 			} else {
 				element.innerHTML = html.innerHTML;
 			}
-			reloadScripts(scripts);
+			if (element.dataset.templateScript) {
+				loadScript(element.dataset.templateScript)
+			}
 			return element;
 		});
 }
 
-function reloadScripts(scripts) {
-	for (let i=0; i<scripts.length; i++) {
-		eval(scripts[i].textContent);
-	}
+async function loadScript(scriptUrl) {
+	return await fetch(scriptUrl).then((res) => res.text()).then((txt) => {
+		eval(txt);
+	});
 }
