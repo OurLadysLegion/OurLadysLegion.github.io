@@ -11,7 +11,7 @@ body {
 	background: var(--bg);
 	color: var(--text);
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-	font-size: 2vmin;
+	overflow-x: hidden;
 }
 
 div#bg {
@@ -55,15 +55,40 @@ div#navSpacer {
 	flex-grow: 1;
 }
 
+div#navMenu {
+	display: none;
+	background: #ffffff;
+	-webkit-mask: url("/HamburgerMenu.svg") no-repeat center / contain;
+	mask: url("/HamburgerMenu.svg") no-repeat center / contain;
+	background: #ffffff;
+	width: 64px;
+	height: 64px;
+}
+
+div#sidebarMenu {
+	display: none;
+	background: #ffffff;
+	-webkit-mask: url("/CloseMenu.svg") no-repeat center / contain;
+	mask: url("/CloseMenu.svg") no-repeat center / contain;
+	background: #ffffff;
+	width: 32px;
+	height: 32px;
+}
+
 div#navLinks > a {
 	color: var(--text);
 	text-decoration: none;
 	padding: 5px;
-	transition: border-bottom 0.1s;
+	transition: border-bottom 0.5s;
+	border-bottom: 2px solid transparent;
 }
 
 div#navLinks > a:hover {
-	border-bottom: 3px solid var(--acc);
+	border-bottom: 2px solid var(--acc);
+}
+
+div#sidebar {
+	display: none;
 }
 
 div#main {
@@ -72,5 +97,53 @@ div#main {
 }
 
 @media only screen and (orientation: portrait) {
-	/* mobile styling here */
+	div#nav {
+		font-size: 150%;
+	}
+
+	div#navMenu, div#sidebarMenu {
+		cursor: pointer;
+		display: block;
+	}
+
+	div#navLinks {
+		display: none;
+	}
+
+	div#sidebar {
+		background: var(--bg);
+		font-size: 200%;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		min-width: 40vw;
+		height: 100vh;
+		position: fixed;
+		padding: 15px;
+		top: 0px;
+		left: 100vw;
+		transition: transform 0.2s;
+		border-left: 2px solid var(--acc);
+		overflow-y: auto;
+	}
+
+	div#sidebar > a {
+		color: var(--text);
+		text-decoration: none;
+		padding: 5px;
+		/*transition: border-bottom 0.5s;*/
+		border-bottom: 2px solid transparent;
+	}
+
+	div#sidebar > a::before {
+		display: block;
+		content: "";
+		width: 100%;
+		margin: 10px 0px;
+		border-top: 2px solid var(--acc);
+	}
+
+	div#sidebar > a:hover {
+		/*border-bottom: 2px solid var(--acc);*/
+	}
 }

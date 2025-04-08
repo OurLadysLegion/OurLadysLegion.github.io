@@ -1,0 +1,8 @@
+<!--
+Author: Nick G.
+Made For: Our Lady's Legion
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" fill="#fff">
+	<path d="M 1,0 l 8,8 a 0.5 0.5 0 1 1 -1,1 l -7,-7 a 0.5 0.5 0 0 1 1,-1z"/>
+	<path d="M 9,0 l -8,8 a 0.5 0.5 0 1 0 1,1 l 7,-7 a 0.5 0.5 0 0 0 -1,-1z"/>
+</svg>
