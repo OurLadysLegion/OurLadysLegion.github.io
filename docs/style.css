@@ -96,8 +96,16 @@ div#sidebar {
 
 div#main {
 	text-align: center;
-	display: block;
 	font-size: 150%;
+}
+
+div#main > div.section0::after {
+	/*content: "";/**/
+	display: block;
+	width: 100vw;
+	height: 50px;
+	background: var(--acc);
+	clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);
 }
 
 @media only screen and (orientation: portrait) {
