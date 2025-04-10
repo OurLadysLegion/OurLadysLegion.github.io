@@ -99,13 +99,39 @@ div#main {
 	font-size: 150%;
 }
 
+div#main h1,
+div#main h2,
+div#main h3,
+div#main h4,
+div#main h5,
+div#main h6 { /* remove margins */
+	margin: 0px;
+}
+
 div#main > div.section0::after {
-	/*content: "";/**/
+	content: "";/**/
 	display: block;
 	width: 100vw;
 	height: 50px;
+	color: transparent;
 	background: var(--acc);
-	clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);
+	/*clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);*/
+	clip-path: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
+}
+
+div#main > div.section1 {
+	background: var(--acc);
+	color: var(--bg);
+}
+
+div#main > div.section1::after {
+	content: "";/**/
+	display: block;
+	width: 100vw;
+	height: 50px;
+	background: var(--bg);
+	/*clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);*/
+	clip-path: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
 }
 
 @media only screen and (orientation: portrait) {
