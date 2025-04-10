@@ -1,32 +1,40 @@
 :root {
-	--text: #ffffff;
-	--acc: #ffffff;
-	--bg: #303038;
+	--text0: #ffffff;
+	--text1: #303038;
+	--acc0: #ffffff;
+	--acc1: #303038;
+	--bg0: #303038;
+	--bg1: #ffffff;
+	--polygonOld: polygon(0 0, 100% 0, 50% 100%, 0 0);
+	--polygon0: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
 }
 
 body {
 	margin: 0px;
 	width: 100%;
-	min-height: 100%;
-	background: var(--bg);
-	color: var(--text);
+	min-height: 100vh;
+	background: var(--bg0);
+	color: var(--text0);
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 	overflow-x: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 a {
-	color: var(--text);
+	color: var(--text0);
 	padding: 5px;
 }
 
 div#bg {
-	z-index: -1;
+	z-index: -100;
 	position: fixed;
 	top: 0px;
 	left: 0px;
 	width: 100%;
 	height: 100%;
-	background: var(--bg);
+	background: var(--bg0);
 }
 
 div#nav {
@@ -36,7 +44,7 @@ div#nav {
 	margin: 0px;
 	padding: 15px;
 	width: calc(100% - 30px);
-	border-bottom: 2px solid var(--acc);
+	border-bottom: 2px solid var(--acc0);
 	font-size: 250%;
 }
 
@@ -45,13 +53,13 @@ div#navText {
 }
 
 div.logo {
-	background: var(--acc);
+	background: var(--acc0);
 	-webkit-mask: url("/OLLSheild.svg") no-repeat center / contain;
 	mask: url("/OLLSheild.svg") no-repeat center / contain;
 }
 
 div#navLogo {
-	background: var(--acc);
+	background: var(--acc0);
 	width: 64px;
 	height: 64px;
 }
@@ -62,20 +70,18 @@ div#navSpacer {
 
 div#navMenu {
 	display: none;
-	background: var(--acc);
+	background: var(--acc0);
 	-webkit-mask: url("/HamburgerMenu.svg") no-repeat center / contain;
 	mask: url("/HamburgerMenu.svg") no-repeat center / contain;
-	background: var(--acc);
 	width: 64px;
 	height: 64px;
 }
 
 div#sidebarMenu {
 	display: none;
-	background: var(--acc);
+	background: var(--acc0);
 	-webkit-mask: url("/CloseMenu.svg") no-repeat center / contain;
 	mask: url("/CloseMenu.svg") no-repeat center / contain;
-	background: var(--acc);
 	width: 32px;
 	height: 32px;
 }
@@ -87,10 +93,11 @@ div#navLinks > a {
 }
 
 div#navLinks > a:hover {
-	border-bottom: 2px solid var(--acc);
+	border-bottom: 2px solid var(--acc0);
 }
 
 div#sidebar {
+	z-index: 100; /* prevent clipping from other elements */
 	display: none;
 }
 
@@ -114,14 +121,13 @@ div#main > div.section0::after {
 	width: 100vw;
 	height: 50px;
 	color: transparent;
-	background: var(--acc);
-	/*clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);*/
-	clip-path: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
+	background: var(--bg1);
+	clip-path: var(--polygon0);
 }
 
 div#main > div.section1 {
-	background: var(--acc);
-	color: var(--bg);
+	background: var(--bg1);
+	color: var(--text1);
 }
 
 div#main > div.section1::after {
@@ -129,9 +135,49 @@ div#main > div.section1::after {
 	display: block;
 	width: 100vw;
 	height: 50px;
-	background: var(--bg);
-	/*clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);*/
-	clip-path: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
+	background: var(--bg0);
+	clip-path: var(--polygon0);
+}
+
+div#main > div.section2 {
+	background: var(--bg1);
+	color: var(--text1);
+}
+
+div#footer {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	margin: 0px;
+	padding: 15px;
+	width: calc(100% - 30px);
+	font-size: 150%;
+	color: var(--text1);
+	margin-top: auto;
+	background: var(--bg1);
+}
+
+div#footerContainer {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+}
+
+div#footerText {
+	font-weight: bold;
+}
+
+div#footerLogo {
+	background: var(--acc1);
+	width: 32px;
+	height: 32px;
+}
+
+div.footerLinks > a {
+	font-size: 75%;
+	color: var(--text1);
 }
 
 @media only screen and (orientation: portrait) {
