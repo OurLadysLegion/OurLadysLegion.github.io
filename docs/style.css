@@ -157,6 +157,7 @@ div#footer {
 	color: var(--text1);
 	margin-top: auto;
 	background: var(--bg1);
+	border-top: 2px solid var(--acc1);
 }
 
 div#footerContainer {
