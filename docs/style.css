@@ -1,12 +1,16 @@
 :root {
 	--text0: #ffffff;
-	--text1: #303038;
+	--text1: #4682b4;
 	--acc0: #ffffff;
-	--acc1: #303038;
-	--bg0: #303038;
+	--acc1: #4682b4; /* #303038 */
+	--bg0: #4682b4;
 	--bg1: #ffffff;
-	--polygonOld: polygon(0 0, 100% 0, 50% 100%, 0 0);
-	--polygon0: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);
+	/*--polygonOld: polygon(0 0, 100% 0, 50% 100%, 0 0);
+	/*--polygon0: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);*/
+	/*--polygon0: path("M 0 0 Q 0.5 1 1 0 L 1 1 L 0 1 Z");
+	/*--polygon0: path("M 0 0 L 0.5 1 L 1 0 L 0 0 Z");*/
+	--polygon0: url(#arcPath0);
+	--polygon1: ellipse(50% 100% at 50% 100%);
 }
 
 body {
@@ -120,7 +124,6 @@ div#main > div.section0::after {
 	display: block;
 	width: 100vw;
 	height: 50px;
-	color: transparent;
 	background: var(--bg1);
 	clip-path: var(--polygon0);
 }
@@ -136,7 +139,7 @@ div#main > div.section1::after {
 	width: 100vw;
 	height: 50px;
 	background: var(--bg0);
-	clip-path: var(--polygon0);
+	clip-path: var(--polygon1);
 }
 
 div#main > div.section2 {
