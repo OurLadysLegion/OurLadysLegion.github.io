@@ -10,17 +10,17 @@
 	--polygon1: ellipse(50% 100% at 50% 100%);
 }
 
-:root {
+/*:root {
 	--text0: #4682b4;
 	--text1: #202028;
 	--acc0: #4682b4;
 	--acc1: #202028;
 	--bg0: #202028;
 	--bg1: #4682b4;
-	/*--polygon0: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);*/
+	/*--polygon0: polygon(0 0, 50% 100%, 100% 0, 100% 100%, 0 100%, 0 0);*//*
 	--polygon0: url(#arcPath0);
 	--polygon1: ellipse(50% 100% at 50% 100%);
-}
+}/**/
 
 body {
 	margin: 0px;
