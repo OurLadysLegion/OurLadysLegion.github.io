@@ -40,6 +40,26 @@ a {
 	padding: 5px;
 }
 
+div.imgGallery {
+	width: 100vw;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+div.imgGallery * {
+	box-sizing: border-box;
+}
+
+div.imgGallery div.column {
+	flex: 50%;
+	max-width: 50%;
+}
+
+div.imgGallery div.column img {
+	vertical-align: middle;
+	width: 100%;
+}
+
 div#bg {
 	z-index: -100;
 	position: fixed;
