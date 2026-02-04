@@ -85,6 +85,10 @@ div#navText {
 	font-weight: bold;
 }
 
+div#navText:hover {
+	cursor: pointer;
+}
+
 div.logo {
 	background: var(--acc0);
 	-webkit-mask: url("/OLLSheild.svg") no-repeat center / contain;
@@ -95,6 +99,10 @@ div#navLogo {
 	background: var(--acc0);
 	width: 64px;
 	height: 64px;
+}
+
+div#navLogo:hover {
+	cursor: pointer;
 }
 
 div#navSpacer {
