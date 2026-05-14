@@ -1,6 +1,10 @@
+const clientBtn = document.getElementById("clientBtn");
+const serverBtn = document.getElementById("serverBtn");
+
 const serverBaseID = "23e10590-8809-446d-83ff-d16688c3bac5"; //hardcoded baseID for now, may make this dynamic later.
 
-
+clientBtn.onclick = runClient;
+serverBtn.onclick = runServer;
 
 function runClient() {
     var peer = new Peer(serverBaseID);
