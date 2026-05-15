@@ -145,6 +145,8 @@ div#sidebar {
 div#main {
 	text-align: center;
 	font-size: 150%;
+	flex-grow: 1;
+	overflow-x: hidden;
 }
 
 div#main h1,
@@ -182,6 +184,59 @@ div#main > div.section1::after {
 div#main > div.section2 {
 	background: var(--bg1);
 	color: var(--text1);
+}
+
+div#main > div#CATClientOptions, div#main > div#CATServerOptions, div#main > div#CATClient {
+	padding: 15px;
+}
+
+div#main input.CAT {
+	background: var(--bg1);
+	color: var(--text1);
+	padding: 10px;
+	outline: none;
+	border: none;
+	border-radius: 15px;
+	font-size: 125%;
+}
+
+div#main:has(.clientActive) {
+	display: flex;
+	flex-direction: column;
+}
+
+div#main > div#CATClient {
+	width: 100%;
+	min-height: 100%;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	text-align: left;
+	justify-content: flex-end;
+	flex-grow: 1;
+}
+
+div#main > div#CATClient > div#CATMessageOutput{
+	display: flex;
+	align-items: flex-end;
+}
+
+div#main > div#CATClient > div#CATInputContainer {
+	display: flex;
+	flex-direction: row;
+	width: calc(100% - 30px);
+	flex-wrap: wrap;
+}
+
+div#main > div#CATClient > div#CATInputContainer > * {
+	margin: 5px;
+	flex-basis: calc(10% - 10px);
+	max-width: calc(100% - 30px);
+}
+
+div#main > div#CATClient > div#CATNavContainer {
+	display: flex;
+	flex-direction: row;
+	width: calc(100% - 30px);
 }
 
 div#footer {
