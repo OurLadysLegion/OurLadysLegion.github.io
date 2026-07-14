@@ -16,7 +16,7 @@
                 <div id="main">
                         <br>
                         <h1>Our Lady's Legion's Medieval Feast 2025 Image Gallery (Downloads)</h1><br>
-                        <input type="button" class="CAT" onclick="downloadImages()" value="Download all images"/>
+                        <input type="button" class="CAT" onclick="downloadImages()" value="Download all images"/><br>
                         <a download class="imgDownload" href="/Images/Feast2025/IMG_0001.JPG">Dom Portrait 1</a><br>
                         <a download class="imgDownload" href="/Images/Feast2025/IMG_0004.JPG">Anthony Portrait 1</a><br>
                         <a download  class="imgDownload" href="/Images/Feast2025/IMG_0005.jpg">Anthony Portrait 2</a><br>
@@ -55,7 +55,7 @@
                 <script src="/HTMLTemplates.js"></script>
                 <script>
                         function downloadImages() {
-                                const urls = document.querySelectorAll("imgDownload");
+                                const urls = document.querySelectorAll("a.imgDownload");
 
                                 urls.forEach((element, index) => {
                                         element.click();
