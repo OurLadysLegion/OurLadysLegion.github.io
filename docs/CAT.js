@@ -190,6 +190,7 @@ async function runServer() {
     var conns = [];
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
+        CATServerLogs.innerText += "Server is Running\n".
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
             CATServerLogs.innerText += "Connection from " + conn.peer + "\n";
