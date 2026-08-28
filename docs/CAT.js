@@ -10,6 +10,7 @@ const messageOutput = document.getElementById("CATMessageOutput");
 const messageInput = document.getElementById("CATMessageInput");
 const messageSubmit = document.getElementById("CATMessageSubmit");
 const CATBackBtn = document.getElementById("CATBackBtn");
+const CATServerLogs = document.getElementById("CATServerLogs");
 
 
 const clientBaseID = "cat-client-";
@@ -168,6 +169,7 @@ function runClient(serverID, callback=() => {}) {
         var conn = peer.connect(serverID);
         conn.on("open", () => {
             console.log("Connected to Server");
+            messageOutput.innerText += "Connected to Server\n";
             callback(peer, conn);
             //window.setInterval(() => {conn.send("PING")}, 1000);
             //conn.on("data", (data) => {console.log(data)});
@@ -175,6 +177,7 @@ function runClient(serverID, callback=() => {}) {
 
         conn.on("close", () => {
             console.log("Disconnected from " + conn.peer);
+            messageOutput.innerText += "Connected to Server\n";
         });
     });
     return peer;
@@ -189,6 +192,7 @@ async function runServer() {
         console.log("Peer ID is " + id);
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
+            CATServerLogs.innerText += "Connection from " + conn.peer + "\n";
             conns.push(conn);
             conn.on("data", (data) => {
                 console.log(data);
@@ -205,6 +209,7 @@ async function runServer() {
 
             conn.on("close", () => {
                 console.log("Disconnected from " + conn.peer);
+                CATServerLogs.innerText += "Disconnected from " + conn.peer + "\n";
             });
         });
     });
