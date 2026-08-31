@@ -169,7 +169,7 @@ function runClient(serverID, callback=() => {}) {
         var conn = peer.connect(serverID);
         conn.on("open", () => {
             console.log("Connected to Server");
-            messageOutput.innerText += "Connected to Server\n";
+            messageOutput.innerText += "[[ Connected to Server ]]\n";
             callback(peer, conn);
             //window.setInterval(() => {conn.send("PING")}, 1000);
             //conn.on("data", (data) => {console.log(data)});
@@ -177,7 +177,7 @@ function runClient(serverID, callback=() => {}) {
 
         conn.on("close", () => {
             console.log("Disconnected from " + conn.peer);
-            messageOutput.innerText += "Connected to Server\n";
+            messageOutput.innerText += "[[ Disconnected from Server ]]\n";
         });
     });
     return peer;
@@ -190,10 +190,11 @@ async function runServer() {
     var conns = [];
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
-        CATServerLogs.innerText += "Server is Running\n";
+        CATServerLogs.innerText += "[[ Server is Running ]]\n";
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
-            CATServerLogs.innerText += "Connection from " + conn.peer + "\n";
+            CATServerLogs.innerText += "[[ Connection from " + conn.peer + " ]]\n";
+            serverBroadcast(conns, "[[ User <" + conn.peer + "> is online ]]\n");
             conns.push(conn);
             conn.on("data", (data) => {
                 console.log(data);
@@ -210,7 +211,7 @@ async function runServer() {
 
             conn.on("close", () => {
                 console.log("Disconnected from " + conn.peer);
-                CATServerLogs.innerText += "Disconnected from " + conn.peer + "\n";
+                CATServerLogs.innerText += "[[ Disconnected from " + conn.peer + " ]]\n";
             });
         });
     });
