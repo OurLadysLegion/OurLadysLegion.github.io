@@ -41,7 +41,7 @@ jobs:
           name: github-pages
           # Upload this path:
           path: './docs/'
-          compression-level: 0 # Skip compression, might be faster
+          # compression-level: 0 # Skip compression, might be faster (doesn't work with upload-pages-artifact)
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
