@@ -36,12 +36,12 @@ jobs:
       # - name: Setup Pages
         # uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           name: github-pages
           # Upload this path:
           path: './docs/'
-          compression-level: 0 # Skip compression, might be faster
+          # compression-level: 0 # Skip compression, might be faster
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
