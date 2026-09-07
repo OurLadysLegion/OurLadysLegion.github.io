@@ -19,12 +19,13 @@ const serverBaseID = "cat-server-8ec76e28-009c-";
 var maxServerCount = 32;
 var clientConfig = {
     name: "Anonymous",
+    password: "",
     serverID: null,
     currentConn: null
 };
 var serverConfig = {
     name: "CAT Server",
-    password: null
+    password: ""
 };
 
 
@@ -168,6 +169,7 @@ function runClient(serverID, callback=() => {}) {
         console.log("Peer ID is " + id);
         var conn = peer.connect(serverID);
         conn.on("open", () => {
+            conn.send("USER LOGIN: " + clientConfig.name);
             console.log("Connected to Server");
             messageOutput.innerText += "[[ Connected to Server ]]\n";
             callback(peer, conn);
@@ -194,7 +196,7 @@ async function runServer() {
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
             CATServerLogs.innerText += "[[ Connection from " + conn.peer + " ]]\n";
-            serverBroadcast(conns, "[[ User <" + conn.peer + "> is online ]]\n");
+            //serverBroadcast(conns, "[[ User <" + conn.peer + "> has connected ]]\n");
             conns.push(conn);
             conn.on("data", (data) => {
                 console.log(data);
@@ -204,6 +206,9 @@ async function runServer() {
                         id: id
                     };
                     conn.send(serverDetails);
+                } else if (data.startsWith("USER LOGIN: ")) {
+                    var username = data.split("USER LOGIN: ")[1];
+                    serverBroadcast(conns, "[[ User <" + username+ "> has connected ]]\n");
                 } else {
                     serverBroadcast(conns, data);
                 }
