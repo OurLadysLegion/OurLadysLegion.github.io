@@ -180,6 +180,7 @@ function runClient(serverID, callback=() => {}) {
         conn.on("close", () => {
             console.log("Disconnected from " + conn.peer);
             messageOutput.innerText += "[[ Disconnected from Server ]]\n";
+            messageOutput.innerText = "";
         });
     });
     return peer;
@@ -188,7 +189,7 @@ function runClient(serverID, callback=() => {}) {
 async function runServer() {
     let serverList = await getServerList();
     let suffix = getAvailableIDs(serverList);
-    var peer = new Peer(serverBaseID + suffix); // make this number dynamic
+    var peer = new Peer(serverBaseID + suffix);
     var conns = [];
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
@@ -208,7 +209,8 @@ async function runServer() {
                     conn.send(serverDetails);
                 } else if (data.startsWith("USER LOGIN: ")) {
                     var username = data.split("USER LOGIN: ")[1];
-                    serverBroadcast(conns, "[[ User <" + username+ "> has connected ]]\n");
+                    var connsExcludingUser = conns.filter(c => c !== conn);
+                    serverBroadcast(connsExcludingUser, "[[ User <" + username+ "> has connected ]]\n");
                 } else {
                     serverBroadcast(conns, data);
                 }
