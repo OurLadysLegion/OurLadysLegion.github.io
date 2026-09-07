@@ -210,7 +210,7 @@ async function runServer() {
                 } else if (data.startsWith("USER LOGIN: ")) {
                     var username = data.split("USER LOGIN: ")[1];
                     var connsExcludingUser = conns.filter(c => c !== conn);
-                    serverBroadcast(connsExcludingUser, "[[ User <" + username+ "> has connected ]]\n");
+                    serverBroadcast(connsExcludingUser, "[[ User <" + username+ "> has connected ]]");
                 } else {
                     serverBroadcast(conns, data);
                 }
