@@ -171,7 +171,8 @@ function runClient(serverID, callback=() => {}) {
         conn.on("open", () => {
             conn.send("USER LOGIN: " + clientConfig.name);
             console.log("Connected to Server");
-            messageOutput.innerText += "[[ Connected to Server ]]\n";
+            let msgs = messageOutput.innerText + "[[ Connected to Server ]]\n"; //this is a workaround to (hopefully) fix a display error when logging back in
+            messageOutput.innerText = msgs;
             callback(peer, conn);
             //window.setInterval(() => {conn.send("PING")}, 1000);
             //conn.on("data", (data) => {console.log(data)});
