@@ -16,7 +16,7 @@ function parseArticle(txt) {
     .replace(/^###### (.*$)/gm, "<h6>$1</h6>")
     .replace(/\*(.*?)\*/g, "<strong>$1</strong>")
     .replace(/%(.*?)%/g, "<em>$1</em>")
-    .replace(/_(.*?)_/g, "<u>$1</em>");
+    .replace(/_(.*?)_/g, "<u>$1</u>");
     return txt.split("\n").join("<br>");
 }
 
