@@ -1,3 +1,4 @@
+// Declare element variables
 const mainDiv = document.getElementById("main");
 const clientOptionsDiv = document.getElementById("CATClientOptions");
 const serverOptionsDiv = document.getElementById("CATServerOptions");
@@ -12,7 +13,7 @@ const messageSubmit = document.getElementById("CATMessageSubmit");
 const CATBackBtn = document.getElementById("CATBackBtn");
 const CATServerLogs = document.getElementById("CATServerLogs");
 
-
+// Declare configuration variables
 const clientBaseID = "cat-client-";
 // full UUID for reference: '8ec76e28-009c-46eb-b4f2-9a251bd925e0'
 const serverBaseID = "cat-server-8ec76e28-009c-";
@@ -28,7 +29,7 @@ var serverConfig = {
     password: ""
 };
 
-
+// Set button event listeners
 serverListReloadBtn.addEventListener("click", () => {
     getServerList().then((list) => {
         //console.log(list);
@@ -56,7 +57,7 @@ serverOptionsDiv.style.display = "none";
 clientDiv.style.display = "none";
 clientDiv.className = "CAT";
 
-toggleOptionsBtn0.addEventListener("click", () => {
+const toggleOptionsFunc = () => {
     if (clientOptionsDiv.style.display === "none") {
         clientOptionsDiv.style.display = "block";
         serverOptionsDiv.style.display = "none";
@@ -66,19 +67,10 @@ toggleOptionsBtn0.addEventListener("click", () => {
     }
     clientDiv.style.display = "none";
     clientDiv.className = "CAT";
-});
+}
 
-toggleOptionsBtn1.addEventListener("click", () => {
-    if (clientOptionsDiv.style.display === "none") {
-        clientOptionsDiv.style.display = "block";
-        serverOptionsDiv.style.display = "none";
-    } else if (serverOptionsDiv.style.display === "none") {
-        clientOptionsDiv.style.display = "none";
-        serverOptionsDiv.style.display = "block";
-    }
-    clientDiv.style.display = "none";
-    clientDiv.className = "CAT";
-});
+toggleOptionsBtn0.addEventListener("click", toggleOptionsFunc);
+toggleOptionsBtn1.addEventListener("click", toggleOptionsFunc);
 
 CATBackBtn.addEventListener("click", () => {
     clientConfig.serverID = null;
@@ -90,6 +82,7 @@ CATBackBtn.addEventListener("click", () => {
 });
 
 
+// Declare main functions
 function getServerList(max=maxServerCount) {
     var peer = new Peer(clientBaseID + crypto.randomUUID());
     var peerIDs = Array.from({length: max}, (_, i) => serverBaseID + i);
