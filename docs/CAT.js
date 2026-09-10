@@ -1,4 +1,4 @@
-// Declare element variables
+// Declare element letiables
 const mainDiv = document.getElementById("main");
 const clientOptionsDiv = document.getElementById("CATClientOptions");
 const serverOptionsDiv = document.getElementById("CATServerOptions");
@@ -13,30 +13,34 @@ const messageSubmit = document.getElementById("CATMessageSubmit");
 const CATBackBtn = document.getElementById("CATBackBtn");
 const CATServerLogs = document.getElementById("CATServerLogs");
 
-// Declare configuration variables
+// Declare configuration letiables
 const clientBaseID = "cat-client-";
 // full UUID for reference: '8ec76e28-009c-46eb-b4f2-9a251bd925e0'
 const serverBaseID = "cat-server-8ec76e28-009c-";
 const registryID = "cat-registry-8ec76e28-009c-46eb-b4f2-9a251bd925e0";
-var maxServerCount = 16;
-var clientConfig = {
+let maxServerCount = 16;
+let clientConfig = {
     name: "Anonymous",
     password: "",
     serverID: null,
     currentConn: null
 };
-var serverConfig = {
+let serverConfig = {
     name: "CAT Server",
     password: ""
 };
 
 // Set button event listeners
 serverListReloadBtn.addEventListener("click", () => {
-    getServerList().then((list) => {
+    // getServerList()
+    queryRegistry().then(async (list) => {
+        if (list === false) {
+            list = await getServerList();
+        }
         //console.log(list);
         CATServerList.innerHTML = "<h2>Server List: </h2>";
         list.forEach((server) => {
-            var btn = document.createElement("input");
+            let btn = document.createElement("input");
             btn.type = "button";
             btn.className = "CAT";
             btn.value = server.name + " (" + server.id.split("-").reverse()[0] + ")";
@@ -86,16 +90,19 @@ CATBackBtn.addEventListener("click", () => {
 // Declare main functions
 
 function queryRegistry() { // not fully implemented/working
-    var peer = new Peer(clientBaseID + crypto.randomUUID());
+    let peer = new Peer(clientBaseID + crypto.randomUUID());
+    window.addEventListener("beforeunload", () => peer.destroy());
     return new Promise((resolve) => {
         peer.on("open", () => {
             const conn = peer.connect(registryID);
             conn.on("data", (data) => {
+                console.log(data);
                 peer.destroy();
                 resolve(data);
             });
             conn.on("open", () => {
-                conn.send("GET SERVER LIST");
+                console.log("Connected to Registry");
+                conn.send({msg: "GET SERVER LIST"});
             });
             conn.on("error", (err) => {
                 peer.destroy();
@@ -106,13 +113,20 @@ function queryRegistry() { // not fully implemented/working
                 resolve(false);
             }, 2000);
         });
+        peer.on("error", (err) => {
+            console.warn(err);
+            if (err.type === "peer-unavailable") {
+                resolve(false);
+            }
+        });
     });
 }
 
 function getServerList(max=maxServerCount) {
     let start = performance.now();
-    var peer = new Peer(clientBaseID + crypto.randomUUID());
-    var peerIDs = Array.from({length: max}, (_, i) => serverBaseID + i);
+    let peer = new Peer(clientBaseID + crypto.randomUUID());
+    window.addEventListener("beforeunload", () => peer.destroy());
+    let peerIDs = Array.from({length: max}, (_, i) => serverBaseID + i);
     const results = [];
 
     return new Promise((resolve) => {
@@ -155,8 +169,9 @@ function getServerList(max=maxServerCount) {
 
 function getServerListBatching(max = maxServerCount) { // slower, probably shouldn't use'
     let start = performance.now();
-    var peer = new Peer(clientBaseID + crypto.randomUUID());
-    var peerIDs = Array.from({ length: max }, (_, i) => serverBaseID + i);
+    let peer = new Peer(clientBaseID + crypto.randomUUID());
+    window.addEventListener("beforeunload", () => peer.destroy());
+    let peerIDs = Array.from({ length: max }, (_, i) => serverBaseID + i);
     const results = [];
     const BATCH = 8;
 
@@ -214,7 +229,7 @@ function getServerListBatching(max = maxServerCount) { // slower, probably shoul
 }
 
 function getAvailableIDs(serverList, max=maxServerCount) {
-    var results = {};
+    let results = {};
     for (let i=0; i<max; i++) {
         results[i] = true;
     }
@@ -229,10 +244,11 @@ function getAvailableIDs(serverList, max=maxServerCount) {
 }
 
 function runClient(serverID, callback=() => {}) {
-    var peer = new Peer(clientBaseID + crypto.randomUUID());
+    let peer = new Peer(clientBaseID + crypto.randomUUID());
+    window.addEventListener("beforeunload", () => peer.destroy());
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
-        var conn = peer.connect(serverID);
+        let conn = peer.connect(serverID);
         clientConfig.currentConn = conn;
         conn.on("open", () => {
             conn.send("USER LOGIN " + clientConfig.name);
@@ -268,12 +284,15 @@ function runClient(serverID, callback=() => {}) {
 }
 
 async function runRegistry() { // buggy, not fully implemented/working
-    var peer = new Peer(registryID);
-    var servers = {};
-    let registry = await getServerList();
+    let servers = {};
+    let registry = await getServerList(); // this must run BEFORE Peer is created, otherwise there is a race condition.
     if (registry !== false) {
         servers = registry;
     }
+    let peer = new Peer(registryID);
+    console.log(peer);
+    window.addEventListener("beforeunload", () => peer.destroy());
+    console.log(servers);
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
         peer.on("connection", (conn) => {
@@ -288,33 +307,37 @@ async function runRegistry() { // buggy, not fully implemented/working
             });
             conn.on("close", () => {
                 delete servers[conn.peer];
-            })
-        })
+            });
+        });
+    });
+    peer.on("error", (err) => {
+        console.warn(err);
     });
 }
 
 async function runServer() {
-    /*let registry = await queryRegistry();
+    let registry = await queryRegistry();
     if (registry === false) {
         runRegistry();
         registry = await getServerList();
     }
-    let serverList = registry;*/
-    let serverList = await getServerList();
+    let serverList = registry;
+    // let serverList = await getServerList();
     let suffix = getAvailableIDs(serverList)[0];
-    var peer = new Peer(serverBaseID + suffix);
-    var conns = [];
+    let peer = new Peer(serverBaseID + suffix);
+    window.addEventListener("beforeunload", () => peer.destroy());
+    let conns = [];
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
         CATServerLogs.innerText += "[[ Server is Running ]]\n";
-        /*let regConn = peer.connect(registryID);
+        let regConn = peer.connect(registryID);
         regConn.on("open", () => {
-            var serverDetails = {
+            let serverDetails = {
                 name: serverConfig.name,
                 id: id
             };
             regConn.send({msg: "JOIN", details: serverDetails});
-        });*/
+        });
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
             CATServerLogs.innerText += "[[ Connection from " + conn.peer + " ]]\n";
@@ -323,14 +346,14 @@ async function runServer() {
             conn.on("data", (data) => {
                 console.log(data);
                 if (data === "GET SERVER DETAILS") {
-                    var serverDetails = {
+                    let serverDetails = {
                         name: serverConfig.name,
                         id: id
                     };
                     conn.send(serverDetails);
                 } else if (data.startsWith("USER LOGIN ")) {
-                    var username = data.split("USER LOGIN ")[1];
-                    var connsExcludingUser = conns.filter(c => c !== conn);
+                    let username = data.split("USER LOGIN ")[1];
+                    let connsExcludingUser = conns.filter(c => c !== conn);
                     serverBroadcast(connsExcludingUser, "[[ User <" + username+ "> has connected ]]");
                 } else {
                     serverBroadcast(conns, data);
