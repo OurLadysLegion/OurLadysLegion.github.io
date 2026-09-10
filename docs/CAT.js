@@ -17,6 +17,7 @@ const CATServerLogs = document.getElementById("CATServerLogs");
 const clientBaseID = "cat-client-";
 // full UUID for reference: '8ec76e28-009c-46eb-b4f2-9a251bd925e0'
 const serverBaseID = "cat-server-8ec76e28-009c-";
+const registryID = "cat-registry-8ec76e28-009c-46eb-b4f2-9a251bd925e0";
 var maxServerCount = 32;
 var clientConfig = {
     name: "Anonymous",
@@ -83,7 +84,33 @@ CATBackBtn.addEventListener("click", () => {
 
 
 // Declare main functions
+
+function queryRegistry() { // not fully implemented/working
+    var peer = new Peer(clientBaseID + crypto.randomUUID());
+    return new Promise((resolve) => {
+        peer.on("open", () => {
+            const conn = peer.connect(registryID);
+            conn.on("data", (data) => {
+                peer.destroy();
+                resolve(data);
+            });
+            conn.on("open", () => {
+                conn.send("GET SERVER LIST");
+            });
+            conn.on("error", (err) => {
+                peer.destroy();
+                resolve(false);
+            });
+            setTimeout(() => {
+                peer.destroy();
+                resolve(false);
+            }, 2000);
+        });
+    });
+}
+
 function getServerList(max=maxServerCount) {
+    let start = performance.now();
     var peer = new Peer(clientBaseID + crypto.randomUUID());
     var peerIDs = Array.from({length: max}, (_, i) => serverBaseID + i);
     const results = [];
@@ -95,13 +122,14 @@ function getServerList(max=maxServerCount) {
                     return new Promise(resolve => {
                         const conn = peer.connect(id);
 
+                        conn.on("data", (data) => {
+                            console.log("Found active server:", id);
+                            results.push(data);
+                            conn.close();
+                            resolve();
+                        });
+
                         conn.on("open", () => {
-                            conn.on("data", (data) => {
-                                console.log("Found active server:", id);
-                                results.push(data);
-                                conn.close();
-                                resolve();
-                            });
                             conn.send("GET SERVER DETAILS");
                         });
 
@@ -117,43 +145,87 @@ function getServerList(max=maxServerCount) {
                         }, 1000);
                     });
                 })
-            ).then(() => resolve(results));
+            ).then(() =>  {
+                let end = performance.now();
+                //console.log(`v1: ${end - start} ms`);
+                resolve(results)});
+        });
+    });
+}
+
+function getServerListBatching(max = maxServerCount) { // slower, probably shouldn't use'
+    let start = performance.now();
+    var peer = new Peer(clientBaseID + crypto.randomUUID());
+    var peerIDs = Array.from({ length: max }, (_, i) => serverBaseID + i);
+    const results = [];
+    const BATCH = 8;
+
+    return new Promise((resolve) => {
+        peer.on("open", () => {
+            let start = 0;
+
+            function nextBatch() {
+                const batch = peerIDs.slice(start, start + BATCH);
+                start += BATCH;
+
+                Promise.all(
+                    batch.map(id => {
+                        return new Promise(resolve => {
+                            const conn = peer.connect(id);
+
+                            conn.on("data", (data) => {
+                                console.log("Found active server:", id);
+                                results.push(data);
+                                conn.close();
+                                resolve();
+                            });
+
+                            conn.on("open", () => {
+                                conn.send("GET SERVER DETAILS");
+                            });
+
+                            conn.on("error", (err) => {
+                                //console.warn(err);
+                                conn.close();
+                                resolve();
+                            });
+
+                            setTimeout(() => {
+                                if (conn.open) conn.close();
+                                resolve();
+                            }, 1000);
+                        });
+                    })
+                ).then(() => {
+                    if (start < peerIDs.length) {
+                        nextBatch();
+                    } else {
+                        peer.destroy();
+                        let end = performance.now();
+                        //console.log(`v2: ${end - start} ms`);
+                        resolve(results);
+                    }
+                });
+            }
+
+            nextBatch();
         });
     });
 }
 
 function getAvailableIDs(serverList, max=maxServerCount) {
-    var results = [];
+    var results = {};
     for (let i=0; i<max; i++) {
-        results[i] = i;
+        results[i] = true;
     }
+    console.log(serverList);
     serverList.forEach((server) => {
-        let id = server.id.split("-").reverse()[0];
-        results.splice(id, 1);
+        let id = parseInt(server.id.split("-").pop());
+        results[id] = false;
     });
-    return results[0];
-}
-
-function showClient(peer, conn) {
-    clientConfig.currentConn = conn;
-    clientOptionsDiv.style.display = "none";
-    serverOptionsDiv.style.display = "none";
-    clientDiv.style.display = "flex";
-    clientDiv.className = "CAT clientActive";
-    conn.on("data", (data) => {
-        messageOutput.innerText += data + "\n";
-    });
-    messageSubmit.addEventListener("click", () => {
-        if (messageInput.value.trim() !== "") {
-            conn.send(clientConfig.name + ": " + messageInput.value);
-            messageInput.value = "";
-        }
-    });
-    messageInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-            messageSubmit.click();
-        }
-    });
+    return Object.keys(results)
+        .filter(k => results[k]) // only allow true (i.e. unused) ids
+        .map(parseInt);
 }
 
 function runClient(serverID, callback=() => {}) {
@@ -161,13 +233,29 @@ function runClient(serverID, callback=() => {}) {
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
         var conn = peer.connect(serverID);
+        clientConfig.currentConn = conn;
         conn.on("open", () => {
-            conn.send("USER LOGIN: " + clientConfig.name);
+            conn.send("USER LOGIN " + clientConfig.name);
             console.log("Connected to Server");
             messageOutput.innerText += "[[ Connected to Server ]]\n";
-            callback(peer, conn);
-            //window.setInterval(() => {conn.send("PING")}, 1000);
-            //conn.on("data", (data) => {console.log(data)});
+            clientOptionsDiv.style.display = "none";
+            serverOptionsDiv.style.display = "none";
+            clientDiv.style.display = "flex";
+            clientDiv.className = "CAT clientActive";
+            conn.on("data", (data) => {
+                messageOutput.innerText += data + "\n";
+            });
+            messageSubmit.addEventListener("click", () => {
+                if (messageInput.value.trim() !== "") {
+                    conn.send(clientConfig.name + ": " + messageInput.value);
+                    messageInput.value = "";
+                }
+            });
+            messageInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    messageSubmit.click();
+                }
+            });
         });
 
         conn.on("close", () => {
@@ -179,14 +267,54 @@ function runClient(serverID, callback=() => {}) {
     return peer;
 }
 
+async function runRegistry() { // buggy, not fully implemented/working
+    var peer = new Peer(registryID);
+    var servers = {};
+    let registry = await getServerList();
+    if (registry !== false) {
+        servers = registry;
+    }
+    peer.on("open", (id) => {
+        console.log("Peer ID is " + id);
+        peer.on("connection", (conn) => {
+            conn.on("data", (data) => {
+                if (data.msg === "JOIN") {
+                    servers[conn.peer] = data.details;
+                } else if (data.msg === "LEAVE") {
+                    delete servers[conn.peer];
+                } else if (data.msg === "GET SERVER LIST") {
+                    conn.send(Object.values(servers));
+                }
+            });
+            conn.on("close", () => {
+                delete servers[conn.peer];
+            })
+        })
+    });
+}
+
 async function runServer() {
+    /*let registry = await queryRegistry();
+    if (registry === false) {
+        runRegistry();
+        registry = await getServerList();
+    }
+    let serverList = registry;*/
     let serverList = await getServerList();
-    let suffix = getAvailableIDs(serverList);
+    let suffix = getAvailableIDs(serverList)[0];
     var peer = new Peer(serverBaseID + suffix);
     var conns = [];
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
         CATServerLogs.innerText += "[[ Server is Running ]]\n";
+        /*let regConn = peer.connect(registryID);
+        regConn.on("open", () => {
+            var serverDetails = {
+                name: serverConfig.name,
+                id: id
+            };
+            regConn.send({msg: "JOIN", details: serverDetails});
+        });*/
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
             CATServerLogs.innerText += "[[ Connection from " + conn.peer + " ]]\n";
@@ -200,8 +328,8 @@ async function runServer() {
                         id: id
                     };
                     conn.send(serverDetails);
-                } else if (data.startsWith("USER LOGIN: ")) {
-                    var username = data.split("USER LOGIN: ")[1];
+                } else if (data.startsWith("USER LOGIN ")) {
+                    var username = data.split("USER LOGIN ")[1];
                     var connsExcludingUser = conns.filter(c => c !== conn);
                     serverBroadcast(connsExcludingUser, "[[ User <" + username+ "> has connected ]]");
                 } else {
@@ -212,6 +340,7 @@ async function runServer() {
             conn.on("close", () => {
                 console.log("Disconnected from " + conn.peer);
                 CATServerLogs.innerText += "[[ Disconnected from " + conn.peer + " ]]\n";
+                conns = conns.filter(c => c !== conn);
             });
         });
     });
