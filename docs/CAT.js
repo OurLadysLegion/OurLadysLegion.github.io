@@ -18,7 +18,7 @@ const clientBaseID = "cat-client-";
 // full UUID for reference: '8ec76e28-009c-46eb-b4f2-9a251bd925e0'
 const serverBaseID = "cat-server-8ec76e28-009c-";
 const registryID = "cat-registry-8ec76e28-009c-46eb-b4f2-9a251bd925e0";
-var maxServerCount = 32;
+var maxServerCount = 16;
 var clientConfig = {
     name: "Anonymous",
     password: "",
