@@ -1,4 +1,4 @@
-// Declare element letiables
+// Declare element variables
 const mainDiv = document.getElementById("main");
 const clientOptionsDiv = document.getElementById("CATClientOptions");
 const serverOptionsDiv = document.getElementById("CATServerOptions");
@@ -13,12 +13,12 @@ const messageSubmit = document.getElementById("CATMessageSubmit");
 const CATBackBtn = document.getElementById("CATBackBtn");
 const CATServerLogs = document.getElementById("CATServerLogs");
 
-// Declare configuration letiables
+// Declare configuration variables
 const clientBaseID = "cat-client-";
 // full UUID for reference: '8ec76e28-009c-46eb-b4f2-9a251bd925e0'
 const serverBaseID = "cat-server-8ec76e28-009c-";
 const registryID = "cat-registry-8ec76e28-009c-46eb-b4f2-9a251bd925e0";
-let maxServerCount = 16;
+let maxServerCount = 32;
 let clientConfig = {
     name: "Anonymous",
     password: "",
@@ -46,7 +46,7 @@ serverListReloadBtn.addEventListener("click", () => {
             btn.value = server.name + " (" + server.id.split("-").reverse()[0] + ")";
             btn.addEventListener("click", () => {
                 clientConfig.serverID = server.id;
-                runClient(clientConfig.serverID, showClient);
+                runClient(clientConfig.serverID)//, showClient);
             });
             //console.log(btn);
             CATServerList.appendChild(document.createElement("br"));
@@ -89,15 +89,18 @@ CATBackBtn.addEventListener("click", () => {
 
 // Declare main functions
 
-function queryRegistry() { // not fully implemented/working
+function queryRegistry() {
+    let start = performance.now();
     let peer = new Peer(clientBaseID + crypto.randomUUID());
     window.addEventListener("beforeunload", () => peer.destroy());
     return new Promise((resolve) => {
         peer.on("open", () => {
             const conn = peer.connect(registryID);
             conn.on("data", (data) => {
-                console.log(data);
+                // console.log(data);
                 peer.destroy();
+                let end = performance.now();
+                // console.log(`Registry took: ${end - start} ms`);
                 resolve(data);
             });
             conn.on("open", () => {
@@ -138,7 +141,8 @@ function getServerList(max=maxServerCount) {
 
                         conn.on("data", (data) => {
                             console.log("Found active server:", id);
-                            results.push(data);
+                            let i = parseInt(data.id.split("-").pop());
+                            results[i] = data;
                             conn.close();
                             resolve();
                         });
@@ -162,12 +166,14 @@ function getServerList(max=maxServerCount) {
             ).then(() =>  {
                 let end = performance.now();
                 //console.log(`v1: ${end - start} ms`);
-                resolve(results)});
+                console.log("Server list", results);
+                resolve(results);
+            });
         });
     });
 }
 
-function getServerListBatching(max = maxServerCount) { // slower, probably shouldn't use'
+function getServerListBatching(max = maxServerCount) { // slower, probably shouldn't use
     let start = performance.now();
     let peer = new Peer(clientBaseID + crypto.randomUUID());
     window.addEventListener("beforeunload", () => peer.destroy());
@@ -190,7 +196,8 @@ function getServerListBatching(max = maxServerCount) { // slower, probably shoul
 
                             conn.on("data", (data) => {
                                 console.log("Found active server:", id);
-                                results.push(data);
+                                let i = parseInt(data.id.split("-").pop());
+                                results[i] = data;
                                 conn.close();
                                 resolve();
                             });
@@ -233,17 +240,17 @@ function getAvailableIDs(serverList, max=maxServerCount) {
     for (let i=0; i<max; i++) {
         results[i] = true;
     }
-    console.log(serverList);
     serverList.forEach((server) => {
         let id = parseInt(server.id.split("-").pop());
         results[id] = false;
     });
+    console.log(results);
     return Object.keys(results)
         .filter(k => results[k]) // only allow true (i.e. unused) ids
         .map(parseInt);
 }
 
-function runClient(serverID, callback=() => {}) {
+function runClient(serverID) {
     let peer = new Peer(clientBaseID + crypto.randomUUID());
     window.addEventListener("beforeunload", () => peer.destroy());
     peer.on("open", (id) => {
@@ -283,30 +290,31 @@ function runClient(serverID, callback=() => {}) {
     return peer;
 }
 
-async function runRegistry() { // buggy, not fully implemented/working
-    let servers = {};
-    let registry = await getServerList(); // this must run BEFORE Peer is created, otherwise there is a race condition.
-    if (registry !== false) {
+async function runRegistry() {
+    //let servers = [];
+    let servers = await getServerList(); // this must run BEFORE Peer is created, otherwise there is a race condition.
+    /*if (registry !== []) {
         servers = registry;
-    }
+    }*/
     let peer = new Peer(registryID);
-    console.log(peer);
     window.addEventListener("beforeunload", () => peer.destroy());
-    console.log(servers);
+    console.log("registry server list: ", servers);
     peer.on("open", (id) => {
         console.log("Peer ID is " + id);
         peer.on("connection", (conn) => {
-            conn.on("data", (data) => {
+            let id = parseInt(conn.peer.split("-").pop());
+            conn.on("data", async (data) => {
                 if (data.msg === "JOIN") {
-                    servers[conn.peer] = data.details;
+                    servers[id] = data.details;
                 } else if (data.msg === "LEAVE") {
-                    delete servers[conn.peer];
+                    delete servers[id];
                 } else if (data.msg === "GET SERVER LIST") {
                     conn.send(Object.values(servers));
+                    servers = await getServerList();
                 }
             });
             conn.on("close", () => {
-                delete servers[conn.peer];
+                delete servers[id];
             });
         });
     });
@@ -332,11 +340,13 @@ async function runServer() {
         CATServerLogs.innerText += "[[ Server is Running ]]\n";
         let regConn = peer.connect(registryID);
         regConn.on("open", () => {
-            let serverDetails = {
-                name: serverConfig.name,
-                id: id
-            };
-            regConn.send({msg: "JOIN", details: serverDetails});
+            setInterval(() => {
+                let serverDetails = {
+                    name: serverConfig.name,
+                    id: id
+                };
+                regConn.send({msg: "JOIN", details: serverDetails});
+            }, 5000);
         });
         peer.on("connection", (conn) => {
             console.log("Connection from " + conn.peer);
