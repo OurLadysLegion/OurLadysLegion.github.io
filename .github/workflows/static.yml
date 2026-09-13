@@ -44,7 +44,12 @@ jobs:
           sparse-checkout: |
             docs
           ref: dev
-          path: docs/dev/
+          path: _dev
+      - name: Move dev docs into place
+        run: |
+          mkdir -p docs/dev
+          cp -r _dev/docs/* docs/dev/
+          rm -rf _dev
       # - name: Setup Pages
         # uses: actions/configure-pages@v5
       - name: Upload artifact
