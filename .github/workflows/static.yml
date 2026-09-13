@@ -39,7 +39,7 @@ jobs:
           ref: main
           path: docs
       - name: Checkout dev branch
-        uses: uses actions/checkout@v7
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
           sparse-checkout: |
