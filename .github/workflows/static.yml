@@ -44,7 +44,7 @@ jobs:
           sparse-checkout: |
             docs
           ref: dev
-          path: dev
+          path: docs/dev/
       # - name: Setup Pages
         # uses: actions/configure-pages@v5
       - name: Upload artifact
