@@ -30,12 +30,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main branch
         uses: actions/checkout@v7
         with:
           fetch-depth: 1 # Shallow clone for faster checkout
           sparse-checkout: | # Only checkout the docs folder for faster checkout
             docs
+          ref: main
+          path: docs
+      - name: Checkout dev branch
+        uses: uses actions/checkout@v7
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            docs
+          ref: dev
+          path: docs/dev
       # - name: Setup Pages
         # uses: actions/configure-pages@v5
       - name: Upload artifact
