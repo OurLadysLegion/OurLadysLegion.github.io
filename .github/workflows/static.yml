@@ -37,7 +37,6 @@ jobs:
           sparse-checkout: | # Only checkout the docs folder for faster checkout
             docs
           ref: main
-          path: docs
       - name: Checkout dev branch
         uses: actions/checkout@v7
         with:
@@ -45,7 +44,7 @@ jobs:
           sparse-checkout: |
             docs
           ref: dev
-          path: docs/dev
+          path: dev
       # - name: Setup Pages
         # uses: actions/configure-pages@v5
       - name: Upload artifact
