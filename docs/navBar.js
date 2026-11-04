@@ -13,9 +13,19 @@ sidebarMenu.addEventListener("click", (evt) => {
 });
 
 navText.addEventListener("click", (evt) => {
-    location.pathname = "/";
+    const lastSlashIndex = location.pathname.lastIndexOf("/");
+    if (lastSlashIndex > 0) {
+        location.pathname = location.pathname.substring(0, lastSlashIndex);
+    } else {
+        location.pathname = "/";
+    }
 });
 
 navLogo.addEventListener("click", (evt) => {
-    location.pathname = "/";
+    const lastSlashIndex = location.pathname.lastIndexOf("/");
+    if (lastSlashIndex > 0) {
+        location.pathname = location.pathname.substring(0, lastSlashIndex);
+    } else {
+        location.pathname = "/";
+    }
 });
